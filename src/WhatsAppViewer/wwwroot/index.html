@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Chat Export Viewer</title>
+    <base href="/" />
+    <link rel="stylesheet" href="css/app.css" />
+    <link rel="icon" type="image/png" href="favicon.png" />
+    <link href="WhatsAppViewer.styles.css" rel="stylesheet" />
+    <!-- GitHub Pages SPA redirect support -->
+    <script>
+        (function (l) {
+            if (l.search[1] === '/') {
+                var decoded = l.search.slice(1).split('&').map(function (s) {
+                    return s.replace(/~and~/g, '&')
+                }).join('?');
+                window.history.replaceState(null, null,
+                    l.pathname.slice(0, -1) + decoded + l.hash
+                );
+            }
+        }(window.location))
+    </script>
+</head>
+
+<body>
+    <div id="app">
+        <svg class="loading-progress">
+            <circle r="40%" cx="50%" cy="50%" />
+            <circle r="40%" cx="50%" cy="50%" />
+        </svg>
+        <div class="loading-progress-text"></div>
+    </div>
+
+    <div id="blazor-error-ui">
+        An unhandled error has occurred.
+        <a href="." class="reload">Reload</a>
+        <span class="dismiss">🗙</span>
+    </div>
+    <script>
+        window.scrollToBottom = (element) => {
+            if (!element) {
+                return;
+            }
+
+            const apply = () => {
+                element.scrollTop = element.scrollHeight;
+            };
+
+            // Run across multiple layout phases to handle late media sizing.
+            apply();
+            window.requestAnimationFrame(apply);
+            window.setTimeout(apply, 60);
+            window.setTimeout(apply, 220);
+
+            const media = element.querySelectorAll('img, video');
+            media.forEach((item) => {
+                if (item.tagName === 'IMG') {
+                    if (item.complete) {
+                        return;
+                    }
+
+                    item.addEventListener('load', apply, { once: true });
+                    return;
+                }
+
+                if (item.readyState >= 1) {
+                    return;
+                }
+
+                item.addEventListener('loadedmetadata', apply, { once: true });
+            });
+        };
+
+        window.scrollToMessageByIndex = (container, messageIndex) => {
+            if (!container) {
+                return;
+            }
+
+            const target = container.querySelector(`[data-message-index="${messageIndex}"]`);
+            if (!target) {
+                return;
+            }
+
+            target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            target.classList.remove('wa-msg-row-jump');
+            target.getBoundingClientRect();
+            target.classList.add('wa-msg-row-jump');
+
+            window.setTimeout(() => {
+                target.classList.remove('wa-msg-row-jump');
+            }, 900);
+        };
+    </script>
+    <script src="_framework/blazor.webassembly.js"></script>
+</body>
+
+</html>
